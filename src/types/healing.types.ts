@@ -6,8 +6,8 @@ export interface TestDetails {
 export interface Locator {
     id: string; // DB_ID
     type: string; // CSS, XPath, TEXT, ID, NAME, etc.
-    value: string;
-    tag: string;
+    value: string; // locator value i.e xpath / css / name / id / etc.
+    tag: string; // complete tag
 }
 
 export interface LocatorMetaData {
@@ -27,6 +27,7 @@ export interface HealingRequest {
     failedLocator: Locator;
     locatorMetaData: LocatorMetaData;
     pageUrl: string;
+    pageSource: string;
 }
 
 export interface HealingResponse {

@@ -1,9 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import type { SerializedRunSummary, SerializedTestResult, SerializedTestError } from "../core/reporting/test-reporter";
-
-// Re-export type definitions for convenience
-export type { SerializedRunSummary, SerializedTestResult, SerializedTestError };
+import type { SerializedRunSummary, SerializedTestResult, SerializedTestError } from "../core/reporting/test-reporter.js";
 
 const SUMMARY_PATH = path.resolve(process.cwd(), "test-results", "summary.json");
 

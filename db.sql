@@ -6,12 +6,15 @@
 -- 2. Create the Table to store locators
 CREATE TABLE IF NOT EXISTS locators (
   id SERIAL PRIMARY KEY,
-  key_name VARCHAR(100) UNIQUE NOT NULL,
-  locator_type VARCHAR(50) NOT NULL DEFAULT 'css',
-  locator_value TEXT NOT NULL,
-  page_name VARCHAR(100) NOT NULL,
-  description TEXT,
+
+  page_name VARCHAR(200) NOT NULL,
+
+  locators JSONB NOT NULL,
+
+  metadata JSONB,
+
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
