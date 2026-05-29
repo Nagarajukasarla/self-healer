@@ -3,62 +3,7 @@ import { dbManager } from "../core/locator-manager/db-manager";
 import { HomePage } from "../pages/home.page";
 import { logger } from "../utils/logger";
 
-// Default/fallback locators in case DB is unreachable
-const DEFAULT_LOCATORS: Record<string, string> = {
-    headline: "h1.headline",
-    button: "button#regular-btn",
-    toggle_button: "button#toggle-btn77",
-    dropdown: "select#my-dropdown",
-};
 
-// HTML content for testing the page elements locally
-const MOCK_HTML = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Mock Self-Healer Home Page</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .headline { color: #2c3e50; }
-    button { margin: 10px 0; padding: 8px 16px; cursor: pointer; }
-    select { display: block; margin-top: 10px; padding: 5px; }
-  </style>
-</head>
-<body>
-  <h1 class="headline">Self-Healing Automation Dashboard</h1>
-  
-  <div>
-    <button id="regular-btn">Regular Click</button>
-  </div>
-  
-  <div>
-    <button id="toggle-btn">Toggle State: OFF</button>
-  </div>
-  
-  <div>
-    <label for="my-dropdown">Select Option:</label>
-    <select id="my-dropdown">
-      <option value="opt1">Option One</option>
-      <option value="opt2">Option Two</option>
-      <option value="opt3">Option Three</option>
-    </select>
-  </div>
-
-  <script>
-    // Toggle button behavior
-    const toggleBtn = document.getElementById("toggle-btn");
-    toggleBtn.addEventListener("click", () => {
-      if (toggleBtn.innerText === "Toggle State: OFF") {
-        toggleBtn.innerText = "Toggle State: ON";
-      } else {
-        toggleBtn.innerText = "Toggle State: OFF";
-      }
-    });
-  </script>
-</body>
-</html>
-`;
 
 test.describe("Home Page Verification tests", () => {
     let locators: Record<string, string>;
