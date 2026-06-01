@@ -4,14 +4,14 @@ FROM node:22-bookworm
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# 
-RUN pnpm config set ignore-scripts false
-
 # Set working directory
 WORKDIR /app
 
 # Copy dependency definition and lock files
 COPY package.json pnpm-lock.yaml tsconfig.json eslint.config.js ./
+
+# Approve esbuild scripts
+RUN pnpm config set onlyBuiltDependencies esbuild
 
 # Install all dependencies (including devDependencies for linting/typechecking)
 RUN pnpm install --frozen-lockfile
