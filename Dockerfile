@@ -7,8 +7,8 @@ RUN npm install -g pnpm@11.3.0
 # Set working directory
 WORKDIR /app
 
-# Copy dependency definition and lock files
-COPY package.json pnpm-lock.yaml tsconfig.json eslint.config.js ./
+# Copy dependency definition, workspace configuration, and lock files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.json eslint.config.js ./
 
 # Install all dependencies (including devDependencies for linting/typechecking)
 RUN pnpm install --frozen-lockfile
