@@ -9,12 +9,6 @@ export const env = {
   HEALER_AI_SERVICE_URL:
     process.env.HEALER_AI_SERVICE_URL || "",
 
-  HEALING_ENABLED:
-    process.env.HEALING_ENABLED === "true",
-
-  MAX_HEALING_RETRIES:
-    Number(process.env.MAX_HEALING_RETRIES || 2),
-
   DB_HOST: process.env.DB_HOST || "localhost",
   DB_PORT: Number(process.env.DB_PORT || 5432),
   DB_USER: process.env.DB_USER || "postgres",

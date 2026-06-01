@@ -4,6 +4,9 @@ FROM node:22-bookworm
 # Install pnpm globally
 RUN npm install -g pnpm
 
+# 
+RUN pnpm config set ignore-scripts false
+
 # Set working directory
 WORKDIR /app
 
