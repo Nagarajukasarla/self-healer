@@ -2,7 +2,7 @@
 FROM node:22-bookworm
 
 # Install pnpm globally
-RUN npm install -g pnpm
+RUN npm install -g pnpm@11.3.0
 
 # Set working directory
 WORKDIR /app
