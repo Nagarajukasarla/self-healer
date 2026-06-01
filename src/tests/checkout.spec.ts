@@ -1,26 +1,13 @@
+
 import { test } from "@playwright/test";
 import { logger } from "../utils/logger";
 import * as fs from "fs";
 import { dbManager } from "@/core/db/DBManager";
 import { HomePage } from "@/pages/HomePage";
+import { ProductPage } from "@/pages/ProductPage";
 
 
-test.describe("Home Page Verification tests", () => {
-
-    // For now I don't these locators and beforeAllTest 
-    // let locators: Record<string, string>;
-    // test.beforeAll(async () => {
-    //     try {
-    //         // Try to load locators from PostgreSQL DB
-    //         locators = await new DbManager().getLocatorData("home.page");
-    //         logger.info("Successfully fetched locators from PostgreSQL database.");
-    //     } catch (error) {
-    //         logger.warn(
-    //             { error },
-    //             "Database is unavailable or table does not exist."
-    //         );
-    //     }
-    // });
+test.describe("CheckOut Verification tests", () => {
 
     test.beforeEach(async ({ page }) => {
         // Navigate to a mock page containing our HTML elements
@@ -52,8 +39,9 @@ test.describe("Home Page Verification tests", () => {
         });
     });
 
-    test("1. Click on Shop Now button", async ({ page }) => {
+    test("Perform Checkout Order", async ({ page }) => {
         const homePage = new HomePage(page);
+        const productsPage = new ProductPage(page);
 
         const shopNowButton = await dbManager.getLocator("home.hero.shop_now_button");
 
@@ -63,6 +51,25 @@ test.describe("Home Page Verification tests", () => {
             logger.error("Shop Now button locator not found");
             throw new Error("Shop Now button locator not found");
         }
+
+        const productsGrid = await dbManager.getLocator("products.list");
+
+        if (productsGrid) {
+            await productsPage.verifyProductsExist(productsGrid);
+        } else {
+            logger.error("Products list locator not found");
+            throw new Error("Products list locator not found");
+        }
+
+        const firstProduct = await dbManager.getLocator("products.list.first_product_item");
+
+        if (firstProduct) {
+            await productsPage.selectTheFirstProduct(firstProduct);
+        } else {
+            logger.error("First product locator not found");
+            throw new Error("First product locator not found");
+        }
+        
     });  
-    
+
 });
