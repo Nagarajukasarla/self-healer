@@ -15,7 +15,7 @@ export function getTestResults(): SerializedRunSummary | null {
         }
         const data = fs.readFileSync(SUMMARY_PATH, "utf8");
         return JSON.parse(data) as SerializedRunSummary;
-    } catch (error) {
+    } catch {
         return null;
     }
 }
@@ -28,7 +28,7 @@ export function clearTestResults(): void {
         if (fs.existsSync(SUMMARY_PATH)) {
             fs.unlinkSync(SUMMARY_PATH);
         }
-    } catch (error) {
+    } catch {
         // Ignore error if file doesn't exist or is locked
     }
 }

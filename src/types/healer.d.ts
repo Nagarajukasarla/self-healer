@@ -14,8 +14,8 @@ export interface HealingRequest {
 }
 
 
-// Unused
 export interface HealingResponse {
+    type?: string;
     newLocator?: string;
     confidence?: number;
     strategy?: string;

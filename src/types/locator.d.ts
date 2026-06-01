@@ -4,7 +4,7 @@ export interface LocatorStrategy {
 }
 
 export interface LocatorMetadata {
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export interface LocatorRow {

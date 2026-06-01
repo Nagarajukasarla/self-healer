@@ -63,6 +63,8 @@ test.describe("Home Page Verification tests", () => {
             logger.error("Shop Now button locator not found");
             throw new Error("Shop Now button locator not found");
         }
-    });  
+    });
+    
+    
 
 });

@@ -12,7 +12,10 @@ import * as path from "path";
 
 import { heal } from "@/api/healer/healer";
 import { dbManager } from "../db/DBManager";
-import { HealingRequest } from "@/types/healer";
+import { HealingRequest, HealingResponse } from "@/types/healer";
+import { TestHealingHelper } from "@/utils/TestHealingHelper";
+import { mailService } from "@/services/MailService";
+import { logger } from "@/utils/logger";
 
 export interface SerializedTestError {
     message?: string;
@@ -40,31 +43,22 @@ export interface SerializedRunSummary {
 
 class TestReporter implements Reporter {
     private config!: FullConfig;
-
     private suite!: Suite;
-
     private tests: SerializedTestResult[] = [];
-
     private startTime!: number;
-
+    private healingRetries = new Map<string, number>();
     private healingPromises: Promise<void>[] = [];
 
     onBegin(config: FullConfig, suite: Suite) {
-        this.config = config;
-        this.suite = suite;
+        this.config = config; this.suite = suite;
         this.startTime = Date.now();
     }
 
-    onTestEnd(test: TestCase, result: TestResult) {
-
-        const relativeFile = path
-            .relative(process.cwd(), test.location.file)
+    async onTestEnd(test: TestCase, result: TestResult) {
+        const relativeFile = path.relative(process.cwd(), test.location.file)
             .replace(/\\/g, "/");
 
-        const errors: SerializedTestError[] = result.errors.map(err => ({
-            message: err.message,
-            stack: err.stack,
-        }));
+        const errors: SerializedTestError[] = result.errors.map(err => ({ message: err.message, stack: err.stack, }));
 
         const serializedTest: SerializedTestResult = {
             id: test.id,
@@ -80,25 +74,40 @@ class TestReporter implements Reporter {
 
         this.tests.push(serializedTest);
 
-        // Only heal failed tests
-        if (serializedTest.status !== "failed" && serializedTest.status !== "timedOut") {
-            return;
-        }
-
+        /** * Skip passed tests */
+        if (serializedTest.status !== "failed" && serializedTest.status !== "timedOut") { return; } 
+        
+        /** * Run healing asynchronously * without blocking Playwright execution */
         const healingPromise = (async () => {
-            try {
-                const locatorKey = "home.hero.shop_now_button";
 
+            try {
+                /** * Non-locator issue */
+                const isLocatorIssue = TestHealingHelper.isLocatorFailure(serializedTest.errors);
+
+                if (!isLocatorIssue) {
+                    await mailService.sendMail("Non-locator test failure", JSON.stringify(serializedTest, null, 2));
+                    return;
+                }
+
+                /** * Retry limit */
+                const currentRetries = this.healingRetries.get(test.id) || 0;
+                if (currentRetries >= 2) {
+                    await mailService.sendMail("Healing retries exhausted", JSON.stringify(serializedTest, null, 2));
+                    return;
+                }
+
+                /** * Get locator */
+                const locatorKey = "home.hero.shop_now_button";
                 const locatorData = await dbManager.getLocatorData(locatorKey);
 
                 if (!locatorData) {
-                    console.warn(`[Healer] Locator not found: ${locatorKey}`);
+                    logger.warn({ locatorKey }, "Locator not found");
                     return;
                 }
-                let pageUrl = "";
 
+                /** * Attachments */
                 let pageSource = "";
-
+                let pageUrl = "";
                 const attachments = result.attachments || [];
 
                 for (const attachment of attachments) {
@@ -111,34 +120,49 @@ class TestReporter implements Reporter {
                     }
                 }
 
+                /** * Healing request */
                 const healingRequest: HealingRequest = {
                     test: serializedTest,
-
                     failedLocator: locatorData.primary_locator,
-
-                    locatorMetaData: {
-                        [locatorData.key_name]:
-                            locatorData.metadata
-                    },
-
+                    locatorMetaData: { [locatorData.key_name]: locatorData.metadata },
                     pageUrl,
                     pageSource,
                 };
 
-                const response = await heal(healingRequest);
+                /** * Call healer */
+                const healingResponse: HealingResponse = await heal(healingRequest);
 
-                console.log("[Healer Response]", response);
+                logger.info({ healingResponse }, "Healing response received");
+
+                /** * Healed locator found */
+                if (healingResponse?.newLocator) {
+
+                    /** * Update DB */
+                    await dbManager.updateLocator(locatorKey,
+                        { type: healingResponse.type || "xpath", value: healingResponse.newLocator }
+                    );
+
+                    /** * Increase retry count */
+                    this.healingRetries.set(test.id, currentRetries + 1);
+
+                    /** * Re-run failed test */
+                    await TestHealingHelper.rerunTest(serializedTest.file, serializedTest.title);
+                }
 
             } catch (error) {
-                console.error("[Healer] Failed:", error);
+                logger.error({ error }, "Healing flow failed");
+                await mailService.sendMail("Healing pipeline failure", JSON.stringify(error));
             }
         })();
 
+        /** * Store healing promise */
         this.healingPromises.push(healingPromise);
+
     }
 
     async onEnd(result: FullResult) {
-        // Wait for all healing requests to resolve before completing the run
+
+        /** * Wait for all healing requests * before completing reporter */
         await Promise.all(this.healingPromises);
 
         const duration = Date.now() - this.startTime;
@@ -151,19 +175,14 @@ class TestReporter implements Reporter {
         };
 
         const outputDir = path.resolve(process.cwd(), "test-results");
-
         const outputPath = path.join(outputDir, "summary.json");
 
         try {
-
             if (!fs.existsSync(outputDir)) {
                 fs.mkdirSync(outputDir, { recursive: true });
             }
-
             fs.writeFileSync(outputPath, JSON.stringify(summary, null, 2), "utf8");
-
             console.log(`\n[TestReporter] Saved report to: ${outputPath}\n`);
-
         } catch (err) {
             console.error("[TestReporter] Failed to write summary:", err);
         }
@@ -171,5 +190,4 @@ class TestReporter implements Reporter {
         await dbManager.close();
     }
 }
-
 export default TestReporter;

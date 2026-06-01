@@ -1,5 +1,5 @@
 import pg from "pg";
-import { LocatorRow } from "@/types/locator";
+import { LocatorRow, LocatorStrategy } from "@/types/locator";
 import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 
@@ -77,6 +77,29 @@ export class DbManager {
         } catch (error) {
             logger.error({ key, error }, "Failed to fetch locator");
 
+            throw error;
+        }
+    }
+
+    /**
+    * Update primary locator
+    */
+    async updateLocator(key: string, locator: LocatorStrategy): Promise<void> {
+
+        const query = `
+        UPDATE locators
+        SET
+            primary_locator = $1,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE key_name = $2
+    `;
+
+        try {
+            await this.pool.query(query, [JSON.stringify(locator), key]);
+            logger.info({ key, locator }, "Locator updated successfully");
+
+        } catch (error) {
+            logger.error({ key, locator, error }, "Failed to update locator");
             throw error;
         }
     }

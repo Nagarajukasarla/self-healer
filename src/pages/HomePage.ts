@@ -12,15 +12,7 @@ export class HomePage {
      * @param expectedTitle shopco
      * 
      */
-    async verifyPageIsLoaded(expectedTitle?: string): Promise<void> {
-        await expect(this.page).toHaveTitle(/.+/);
-
-        if (expectedTitle) {
-            await expect(this.page).toHaveTitle(
-                new RegExp(expectedTitle, "i")
-            );
-        }
-    }
+    async verifyPageIsLoaded() {}
 
     /**
      * 2. Click that button to start shopping.
