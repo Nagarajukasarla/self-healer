@@ -3,6 +3,7 @@ import { logger } from "../utils/logger";
 import * as fs from "fs";
 import { dbManager } from "@/core/db/DBManager";
 import { HomePage } from "@/pages/HomePage";
+import { runtimeConfig } from "@/config/runtime";
 
 
 test.describe("Home Page Verification tests", () => {
@@ -24,7 +25,7 @@ test.describe("Home Page Verification tests", () => {
 
     test.beforeEach(async ({ page }) => {
         // Navigate to a mock page containing our HTML elements
-        await page.goto("http://localhost:5173/");
+        await page.goto(runtimeConfig.targetUrl);
     });
 
     test.afterEach(async ({ page }, testInfo) => {

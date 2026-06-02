@@ -1,13 +1,34 @@
-import type { FastifyInstance, FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
+import type {
+    FastifyInstance,
+    FastifyPluginAsync,
+    FastifyRequest,
+    FastifyReply
+} from "fastify";
+
 import { spawn } from "child_process";
+
 import { clearTestResults, getTestResults } from "@/utils/test-results.js";
 
-const executeTests = (): Promise<void> => {
+interface RunTestsRequestBody {
+    targetUrl: string;
+}
+
+const executeTests = (targetUrl: string): Promise<void> => {
+
     return new Promise((resolve) => {
-        const child = spawn("pnpm", ["test"], {
-            stdio: "inherit",
-            shell: true,
-        });
+
+        const child = spawn(
+            "pnpm",
+            ["test"],
+            {
+                stdio: "inherit",
+                shell: true,
+                env: {
+                    ...process.env,
+                    TARGET_URL: targetUrl,
+                },
+            }
+        );
 
         child.on("close", () => {
             resolve();
@@ -20,38 +41,64 @@ const executeTests = (): Promise<void> => {
     });
 };
 
-export const testRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-    
-    const handleRunTests = async (request: FastifyRequest, reply: FastifyReply) => {
+export const testRoutes: FastifyPluginAsync = async (
+    fastify: FastifyInstance
+) => {
+
+    const handleRunTests = async (
+        request: FastifyRequest<{
+            Body: RunTestsRequestBody;
+        }>,
+        reply: FastifyReply
+    ) => {
+
+        const { targetUrl } = request.body;
+
+        if (!targetUrl) {
+            return reply.status(400).send({
+                success: false,
+                message: "targetUrl is required",
+            });
+        }
+
+        console.log("Running healer tests against:", targetUrl);
+
         clearTestResults();
-        await executeTests();
+
+        await executeTests(targetUrl);
+
         const results = getTestResults();
 
         if (!results) {
             return reply.status(500).send({
                 success: false,
-                message: "No test results generated"
+                message: "No test results generated",
             });
         }
 
         return reply.send({
             success: results.status === "passed",
-            results
+            targetUrl,
+            results,
         });
     };
 
-    const handleHealthCheck = async (request: FastifyRequest, reply: FastifyReply) => {
-        return reply.status(200).send({ status: "ok" });
+    const handleHealthCheck = async (
+        request: FastifyRequest,
+        reply: FastifyReply
+    ) => {
+
+        return reply.status(200).send({
+            status: "ok",
+        });
     };
 
-    // Health check endpoints (GET and HEAD)
+    // Health check endpoints
     fastify.get("/", handleHealthCheck);
+
     fastify.get("/health", handleHealthCheck);
 
-    // POST /run-tests
-    // This will be called from CI/CD pipeline 
+    // Trigger healer tests
     fastify.post("/run-tests", handleRunTests);
-
-    // GET /run-tests
-    fastify.get("/run-tests", handleRunTests);
 };
+
