@@ -1,71 +1,23 @@
 {
   "status": "failed",
-  "startTime": "2026-05-26T18:46:51.556Z",
-  "duration": 40597,
+  "startTime": "2026-06-01T10:02:14.429Z",
+  "duration": 6757,
   "tests": [
     {
-      "id": "d318381359a9b96acb1e-4c43c020fb586bebc52c",
-      "title": "1. Check headline text is visible",
-      "fullName": "home.spec.ts › Home Page Verification tests › 1. Check headline text is visible",
+      "id": "d318381359a9b96acb1e-917dfdccf0496c6e3421",
+      "title": "1. Click on Shop Now button",
+      "fullName": "home.spec.ts › Home Page Verification tests › 1. Click on Shop Now button",
       "file": "src/tests/home.spec.ts",
-      "line": 95,
+      "line": 55,
       "column": 5,
-      "status": "passed",
-      "duration": 710,
-      "errors": []
-    },
-    {
-      "id": "d318381359a9b96acb1e-5ea6c4423d15e3ca6c65",
-      "title": "2. Check regular button is visible",
-      "fullName": "home.spec.ts › Home Page Verification tests › 2. Check regular button is visible",
-      "file": "src/tests/home.spec.ts",
-      "line": 100,
-      "column": 5,
-      "status": "passed",
-      "duration": 585,
-      "errors": []
-    },
-    {
-      "id": "d318381359a9b96acb1e-3a45e059314ed1fcdf51",
-      "title": "3. Check regular button is clickable",
-      "fullName": "home.spec.ts › Home Page Verification tests › 3. Check regular button is clickable",
-      "file": "src/tests/home.spec.ts",
-      "line": 105,
-      "column": 5,
-      "status": "passed",
-      "duration": 716,
-      "errors": []
-    },
-    {
-      "id": "d318381359a9b96acb1e-3e0f3ecffd83ded37487",
-      "title": "4. Check toggle   button updates state and text on click",
-      "fullName": "home.spec.ts › Home Page Verification tests › 4. Check toggle   button updates state and text on click",
-      "file": "src/tests/home.spec.ts",
-      "line": 110,
-      "column": 5,
-      "status": "timedOut",
-      "duration": 30138,
+      "status": "failed",
+      "duration": 2968,
       "errors": [
         {
-          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-          "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-        },
-        {
-          "message": "Error: locator.innerText: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button#toggle-btn77')\u001b[22m\n",
-          "stack": "Error: locator.innerText: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button#toggle-btn77')\u001b[22m\n\n    at HomePage.toggleButtonAndVerifyChanges (D:\\resource\\Projects\\self-healer\\src\\pages\\home.page.ts:62:45)\n    at D:\\resource\\Projects\\self-healer\\src\\tests\\home.spec.ts:112:24"
+          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+          "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at D:\\resource\\Projects\\self-healer\\src\\tests\\home.spec.ts:27:20"
         }
       ]
-    },
-    {
-      "id": "d318381359a9b96acb1e-5f1f1fedeb766d5fdc90",
-      "title": "5. Select options in dropdown and verify selected choice",
-      "fullName": "home.spec.ts › Home Page Verification tests › 5. Select options in dropdown and verify selected choice",
-      "file": "src/tests/home.spec.ts",
-      "line": 115,
-      "column": 5,
-      "status": "passed",
-      "duration": 724,
-      "errors": []
     }
   ]
 }

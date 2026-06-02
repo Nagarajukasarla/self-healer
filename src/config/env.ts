@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const env = {
-  BASE_URL: process.env.BASE_URL || "",
   HEADLESS: process.env.HEADLESS === "true",
 
   HEALER_AI_SERVICE_URL:

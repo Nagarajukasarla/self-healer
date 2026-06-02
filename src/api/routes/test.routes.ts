@@ -40,6 +40,14 @@ export const testRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
         });
     };
 
+    const handleHealthCheck = async (request: FastifyRequest, reply: FastifyReply) => {
+        return reply.status(200).send({ status: "ok" });
+    };
+
+    // Health check endpoints (GET and HEAD)
+    fastify.get("/", handleHealthCheck);
+    fastify.get("/health", handleHealthCheck);
+
     // POST /run-tests
     // This will be called from CI/CD pipeline 
     fastify.post("/run-tests", handleRunTests);
