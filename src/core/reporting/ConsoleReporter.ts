@@ -34,7 +34,7 @@ export class ConsoleReporter {
         }
         try {
             return JSON.parse(fs.readFileSync(runStatePath, "utf8"));
-        } catch (e) {
+        } catch {
             return [];
         }
     }
@@ -60,7 +60,7 @@ export class ConsoleReporter {
                             fs.unlinkSync(path.join(outputDir, file));
                         }
                     }
-                } catch (e) {
+                } catch {
                     // Ignore
                 }
             }
@@ -110,12 +110,12 @@ export class ConsoleReporter {
                             if (Array.isArray(records)) {
                                 state.push(...records);
                             }
-                        } catch (e) {
+                        } catch {
                             // Ignore
                         }
                     }
                 }
-            } catch (e) {
+            } catch {
                 // Ignore
             }
         }
@@ -192,13 +192,13 @@ export class ConsoleReporter {
         for (const filePath of stateFiles) {
             try {
                 fs.unlinkSync(filePath);
-            } catch (e) {
+            } catch {
                 // Ignore
             }
         }
         try {
             fs.rmdirSync(outputDir);
-        } catch (e) {
+        } catch {
             // Ignore
         }
 

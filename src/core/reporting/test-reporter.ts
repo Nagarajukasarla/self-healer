@@ -169,7 +169,7 @@ class TestReporter implements Reporter {
 
     }
 
-    async onEnd(result: FullResult) {
+    async onEnd(_result: FullResult) {
 
         /** * Wait for all healing requests * before completing reporter */
         await Promise.all(this.healingPromises);
@@ -211,7 +211,7 @@ class TestReporter implements Reporter {
         // If all tests eventually passed, override exit code to be 0
         if (allPassed) {
             const originalExit = process.exit;
-            process.exit = function (code?: number | string | null | undefined): never {
+            process.exit = function (_code?: number | string | null | undefined): never {
                 return originalExit(0);
             };
         }

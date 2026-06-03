@@ -5,7 +5,6 @@ import * as fs from "fs";
 import { dbManager } from "@/core/db/DBManager";
 import { HomePage } from "@/pages/HomePage";
 import { ProductPage } from "@/pages/ProductPage";
-import { env } from "@/config/env";
 import { ProductDetailsPage } from "@/pages/ProductDetailsPage";
 import { runtimeConfig } from "@/config/runtime";
 
