@@ -7,13 +7,14 @@ import { HomePage } from "@/pages/HomePage";
 import { ProductPage } from "@/pages/ProductPage";
 import { env } from "@/config/env";
 import { ProductDetailsPage } from "@/pages/ProductDetailsPage";
+import { runtimeConfig } from "@/config/runtime";
 
 
 test.describe("CheckOut Verification tests", () => {
 
     test.beforeEach(async ({ page }) => {
         // Navigate to a mock page containing our HTML elements
-        await page.goto(env.SHOPCO_URL);
+        await page.goto(runtimeConfig.targetUrl);
     });
 
     test.afterEach(async ({ page }, testInfo) => {

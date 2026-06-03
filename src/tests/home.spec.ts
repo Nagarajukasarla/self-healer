@@ -3,12 +3,12 @@ import { logger } from "@/utils/logger";
 import * as fs from "fs";
 import { dbManager } from "@/core/db/DBManager";
 import { HomePage } from "@/pages/HomePage";
-import { env } from "@/config/env";
+import { runtimeConfig } from "@/config/runtime";
 
 
 test.describe("Home Page Verification tests", () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto(env.SHOPCO_URL);
+        await page.goto(runtimeConfig.targetUrl);
     });
 
     test.afterEach(async ({ page }, testInfo) => {
