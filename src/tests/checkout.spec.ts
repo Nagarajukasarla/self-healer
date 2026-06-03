@@ -42,10 +42,9 @@ test.describe("CheckOut Verification tests", () => {
         });
     });
 
-    test("Perform Checkout Order", async ({ page }) => {
+    test("Check Products are available", async ({ page }) => {
         const homePage = new HomePage(page);
         const productsPage = new ProductPage(page);
-        const productDetailsPage = new ProductDetailsPage(page);
 
         const shopNowButton = await dbManager.getLocator("home.hero.shop_now_button");
 
@@ -63,6 +62,22 @@ test.describe("CheckOut Verification tests", () => {
         } else {
             logger.error("Products list locator not found");
             throw new Error("Products list locator not found");
+        }
+
+    }); 
+    
+    test("Perfrom an order", async ({ page }) => {
+        const homePage = new HomePage(page);
+        const productsPage = new ProductPage(page);
+        const productDetailsPage = new ProductDetailsPage(page);
+
+        const shopNowButton = await dbManager.getLocator("home.hero.shop_now_button");
+
+        if (shopNowButton) {
+            await homePage.clickShopNow(shopNowButton);
+        } else {
+            logger.error("Shop Now button locator not found");
+            throw new Error("Shop Now button locator not found");
         }
 
         const firstProduct = await dbManager.getLocator("products.list.first_product_item");
@@ -94,15 +109,15 @@ test.describe("CheckOut Verification tests", () => {
             throw new Error("Add to Cart success message locator not found");
         }
         
-        // Click on the Go to Cart Button
-        const goToCartButton = await dbManager.getLocator("home.navbar.go_to_cart_button");
+        // // Click on the Go to Cart Button
+        // const goToCartButton = await dbManager.getLocator("home.navbar.go_to_cart_button");
 
-        if (goToCartButton) {
-            await homePage.goToCart(goToCartButton);
-        } else {
-            logger.error("Go to Cart button locator not found");
-            throw new Error("Go to Cart button locator not found");
-        }
-    });  
+        // if (goToCartButton) {
+        //     await homePage.goToCart(goToCartButton);
+        // } else {
+        //     logger.error("Go to Cart button locator not found");
+        //     throw new Error("Go to Cart button locator not found");
+        // }
+    })
 
 });

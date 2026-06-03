@@ -15,7 +15,7 @@ export class TestHealingHelper {
         });
     }
 
-    static async rerunTest(testFile: string, testTitle: string): Promise<void> {
+    static async rerunTest(testFile: string, testTitle: string, currentRetries: number): Promise<void> {
         return new Promise((resolve, reject) => {
             const child = spawn(
                 "pnpm",
@@ -24,11 +24,16 @@ export class TestHealingHelper {
                     "test",
                     testFile,
                     "--grep",
-                    testTitle
+                    `"${testTitle}"`
                 ],
                 {
                     stdio: "inherit",
                     shell: true,
+                    env: {
+                        ...process.env,
+                        IS_HEALING_RERUN: "true",
+                        HEALING_RETRY_COUNT: String(currentRetries)
+                    }
                 }
             );
 

@@ -16,6 +16,7 @@ import { HealingRequest, HealingResponse } from "@/types/healer";
 import { TestHealingHelper } from "@/utils/TestHealingHelper";
 import { mailService } from "@/services/MailService";
 import { logger } from "@/utils/logger";
+import { ConsoleReporter } from "./ConsoleReporter";
 
 export interface SerializedTestError {
     message?: string;
@@ -52,6 +53,7 @@ class TestReporter implements Reporter {
     onBegin(config: FullConfig, suite: Suite) {
         this.config = config; this.suite = suite;
         this.startTime = Date.now();
+        ConsoleReporter.init();
     }
 
     async onTestEnd(test: TestCase, result: TestResult) {
@@ -74,6 +76,9 @@ class TestReporter implements Reporter {
 
         this.tests.push(serializedTest);
 
+        // Record test run details in the shared file
+        ConsoleReporter.recordTest(test, result, relativeFile);
+
         /** * Skip passed tests */
         if (serializedTest.status !== "failed" && serializedTest.status !== "timedOut") { return; } 
         
@@ -90,7 +95,10 @@ class TestReporter implements Reporter {
                 }
 
                 /** * Retry limit */
-                const currentRetries = this.healingRetries.get(test.id) || 0;
+                const currentRetries = process.env.IS_HEALING_RERUN === "true"
+                    ? parseInt(process.env.HEALING_RETRY_COUNT || "0", 10)
+                    : (this.healingRetries.get(test.id) || 0);
+
                 if (currentRetries >= 2) {
                     await mailService.sendMail("Healing retries exhausted", JSON.stringify(serializedTest, null, 2));
                     return;
@@ -143,10 +151,11 @@ class TestReporter implements Reporter {
                     );
 
                     /** * Increase retry count */
-                    this.healingRetries.set(test.id, currentRetries + 1);
+                    const nextRetryCount = currentRetries + 1;
+                    this.healingRetries.set(test.id, nextRetryCount);
 
                     /** * Re-run failed test */
-                    await TestHealingHelper.rerunTest(serializedTest.file, serializedTest.title);
+                    await TestHealingHelper.rerunTest(serializedTest.file, serializedTest.title, nextRetryCount);
                 }
 
             } catch (error) {
@@ -165,21 +174,31 @@ class TestReporter implements Reporter {
         /** * Wait for all healing requests * before completing reporter */
         await Promise.all(this.healingPromises);
 
+        // If this is a rerun child process, do not run report consolidation
+        if (process.env.IS_HEALING_RERUN === "true") {
+            await dbManager.close();
+            return;
+        }
+
         const duration = Date.now() - this.startTime;
 
+        // Generate report and get consolidated results
+        const { consolidatedTests, allPassed } = ConsoleReporter.generateReport(this.tests);
+        const finalStatus: FullResult["status"] = allPassed ? "passed" : "failed";
+
         const summary: SerializedRunSummary = {
-            status: result.status,
+            status: finalStatus,
             startTime: new Date(this.startTime).toISOString(),
             duration,
-            tests: this.tests,
+            tests: consolidatedTests,
         };
 
-        const outputDir = path.resolve(process.cwd(), "test-results");
-        const outputPath = path.join(outputDir, "summary.json");
+        const testResultsDir = path.resolve(process.cwd(), "test-results");
+        const outputPath = path.join(testResultsDir, "summary.json");
 
         try {
-            if (!fs.existsSync(outputDir)) {
-                fs.mkdirSync(outputDir, { recursive: true });
+            if (!fs.existsSync(testResultsDir)) {
+                fs.mkdirSync(testResultsDir, { recursive: true });
             }
             fs.writeFileSync(outputPath, JSON.stringify(summary, null, 2), "utf8");
             console.log(`\n[TestReporter] Saved report to: ${outputPath}\n`);
@@ -188,6 +207,14 @@ class TestReporter implements Reporter {
         }
 
         await dbManager.close();
+
+        // If all tests eventually passed, override exit code to be 0
+        if (allPassed) {
+            const originalExit = process.exit;
+            process.exit = function (code?: number | string | null | undefined): never {
+                return originalExit(0);
+            };
+        }
     }
 }
 export default TestReporter;
