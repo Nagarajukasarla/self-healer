@@ -1,5 +1,5 @@
 # Use official Playwright image instead of plain Node
-FROM mcr.microsoft.com/playwright:v1.54.0-jammy
+FROM mcr.microsoft.com/playwright:v1.60.0-jammy
 
 # Install pnpm globally
 RUN npm install -g pnpm@11.3.0
