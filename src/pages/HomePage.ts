@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { Page, expect } from "@playwright/test";
 
 export class HomePage {
@@ -8,14 +9,17 @@ export class HomePage {
     }
 
     /**
-     * 1. Checks that the headline text is visible.
+     * Checks that the headline text is visible.
      * @param expectedTitle shopco
      * 
      */
-    async verifyPageIsLoaded() {}
+    async verifyPageTitle(_locator: string): Promise<void> {
+        await expect(this.page).toHaveTitle("shopco");
+        logger.info("Page title is verified using page.toHaveTitle");
+    }
 
     /**
-     * 2. Click that button to start shopping.
+     * Click that button to start shopping.
      */
     async clickShopNow(locator: string): Promise<void> {
         const button = this.page.locator(locator);
@@ -30,28 +34,28 @@ export class HomePage {
     }
 
     /**
-     * 3. Checks all the products 
+     * Go to cart
      */
-    async checkProducts(): Promise<void> {}
+    async goToCart(locator: string): Promise<void> { 
+        const button = this.page.locator(locator);
+        await expect(button).toBeVisible();
+        await expect(button).toBeEnabled();
+        await Promise.all([
+            this.page.waitForLoadState("networkidle"),
+            button.click()
+        ]);
+        logger.info(`Clicked Go to Cart using locator: ${locator}`);
+    }
 
     /**
-     * 4. Select a product 
+     * Perform search
      */
-    async selectTheProduct(): Promise<void> {}
-
-    /**
-     * 5. Add the selected item to cart
-     */
-    async addItemToCart(): Promise<void> {}
-
-
-    /**
-     * 6. Go to cart
-     */
-    async goToCart(): Promise<void> { }
-
-    /**
-     * 6. Navigate to Checkout
-     */
-    async proceedToCheckout(): Promise<void> { }
+    async performSearch(locator: string, text: string): Promise<void> {
+        const searchInput = this.page.locator(locator);
+        await expect(searchInput).toBeVisible();
+        await expect(searchInput).toBeEnabled();
+        await searchInput.fill(text);
+        await searchInput.press("Enter");
+        logger.info(`Performed search for ${text} using locator: ${locator}`);
+    }
 }

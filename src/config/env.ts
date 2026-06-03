@@ -5,8 +5,9 @@ dotenv.config();
 export const env = {
   HEADLESS: process.env.HEADLESS === "true",
 
-  HEALER_AI_SERVICE_URL:
-    process.env.HEALER_AI_SERVICE_URL || "",
+  HEALER_AI_SERVICE_URL: process.env.HEALER_AI_SERVICE_URL || "",
+
+  SHOPCO_URL: process.env.SHOPCO_URL || "",
 
   DB_HOST: process.env.DB_HOST || "localhost",
   DB_PORT: Number(process.env.DB_PORT || 5432),

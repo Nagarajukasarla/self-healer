@@ -253,7 +253,7 @@ VALUES
 ),
 
 (
-    'navbar.cart_button_link',
+    'home.navbar.go_to_cart_button',
 
     '{
         "type": "id",
@@ -316,6 +316,81 @@ VALUES
                 "tag": "form",
                 "id": "promo-form",
                 "data-testid": "promo-form"
+            }
+        ]
+    }'::jsonb
+);
+
+INSERT INTO locators (
+    key_name,
+    primary_locator,
+    html_snippet,
+    metadata
+)
+VALUES
+(
+    'home.page_title.shopco',
+
+    '{
+        "type": "xpath",
+        "value": "//title[text()=''shopco'']"
+    }'::jsonb,
+
+    '<title>shopco</title>',
+
+    '{
+        "tag": "title",
+        "text": "shopco",
+        "attributes": {},
+        "parent": {
+            "tag": "head"
+        }
+    }'::jsonb
+);
+
+
+INSERT INTO locators (
+    key_name,
+    primary_locator,
+    html_snippet,
+    metadata
+)
+VALUES
+(
+    'home.navbar.search_input',
+
+    '{
+        "type": "id",
+        "value": "desktop-search-input"
+    }'::jsonb,
+
+    '<input id=''desktop-search-input'' data-testid=''desktop-search-input'' placeholder=''Search for products...'' class=''w-full pl-12 pr-4 py-3 bg-brand-gray border border-transparent rounded-full focus:border-brand-black focus:bg-white outline-none transition-all text-sm font-medium'' type=''text'' value='''' name=''search''>',
+
+    '{
+        "tag": "input",
+        "attributes": {
+            "id": "desktop-search-input",
+            "data-testid": "desktop-search-input",
+            "type": "text",
+            "name": "search",
+            "placeholder": "Search for products..."
+        },
+        "parent": {
+            "tag": "form",
+            "id": "desktop-search-form",
+            "data-testid": "desktop-search-form",
+            "class": "hidden md:flex flex-1 max-w-md relative"
+        },
+        "siblings": [
+            {
+                "tag": "span",
+                "class": "absolute left-4 top-1/2 -translate-y-1/2 text-brand-darkGray/60 pointer-events-none"
+            }
+        ],
+        "relatedElements": [
+            {
+                "tag": "svg",
+                "class": "lucide lucide-search w-5 h-5"
             }
         ]
     }'::jsonb

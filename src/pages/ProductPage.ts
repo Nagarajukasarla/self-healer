@@ -21,14 +21,22 @@ export class ProductPage {
     }
 
     async selectTheFirstProduct(locator: string): Promise<void> {
-        const productsGrid = this.page.locator(locator);
-        const productLinks = productsGrid.locator('a');
+        const element = this.page.locator(locator);
+        const tagName = await element.evaluate(el => el.tagName.toLowerCase()).catch(() => "");
+
+        if (tagName === "a") {
+            await element.click();
+            logger.info(`Clicked on product link directly using locator: ${locator}`);
+            return;
+        }
+
+        const productLinks = element.locator("a");
         const productCount = await productLinks.count();
         if (productCount > 0) {
             await productLinks.first().click();
             logger.info(`Clicked on first product out of ${productCount}`);
         } else {
-            logger.warn('No products found to select');
+            logger.warn("No products found to select");
         }
     }
 }

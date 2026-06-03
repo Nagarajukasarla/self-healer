@@ -1,23 +1,40 @@
 {
-  "status": "failed",
-  "startTime": "2026-06-01T10:02:14.429Z",
-  "duration": 6757,
+  "status": "passed",
+  "startTime": "2026-06-02T19:39:09.129Z",
+  "duration": 14215,
   "tests": [
     {
-      "id": "d318381359a9b96acb1e-917dfdccf0496c6e3421",
-      "title": "1. Click on Shop Now button",
-      "fullName": "home.spec.ts › Home Page Verification tests › 1. Click on Shop Now button",
+      "id": "d318381359a9b96acb1e-c5a101c3249294889124",
+      "title": "1. Verify page title",
+      "fullName": "home.spec.ts › Home Page Verification tests › 1. Verify page title",
       "file": "src/tests/home.spec.ts",
-      "line": 55,
+      "line": 39,
       "column": 5,
-      "status": "failed",
-      "duration": 2968,
-      "errors": [
-        {
-          "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
-          "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at D:\\resource\\Projects\\self-healer\\src\\tests\\home.spec.ts:27:20"
-        }
-      ]
+      "status": "passed",
+      "duration": 6537,
+      "errors": []
+    },
+    {
+      "id": "25ab1bfc84c57e3e3a45-f2b3013898ded618e56f",
+      "title": "Perform Checkout Order",
+      "fullName": "checkout.spec.ts › CheckOut Verification tests › Perform Checkout Order",
+      "file": "src/tests/checkout.spec.ts",
+      "line": 44,
+      "column": 5,
+      "status": "passed",
+      "duration": 9551,
+      "errors": []
+    },
+    {
+      "id": "d318381359a9b96acb1e-8f8e87f4a227683ea2be",
+      "title": "2. Enter sample text in search input",
+      "fullName": "home.spec.ts › Home Page Verification tests › 2. Enter sample text in search input",
+      "file": "src/tests/home.spec.ts",
+      "line": 53,
+      "column": 5,
+      "status": "passed",
+      "duration": 3395,
+      "errors": []
     }
   ]
 }

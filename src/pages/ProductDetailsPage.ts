@@ -22,4 +22,15 @@ export class ProductDetailsPage {
         ]);
         logger.info(`Clicked Add to Cart using locator: ${locator}`);
     }
+
+    /**
+     * Check whether you get Added to Cart Successfully message text
+     */
+    async verifyAddToCartSuccessMessage(locator: string): Promise<void> {
+        const message = this.page.locator(locator);
+        await expect(message).toBeVisible();
+        await expect(message).toContainText("Added");
+        await expect(message).toContainText("to cart successfully");
+        logger.info("Added to Cart Successfully message verified");
+    }
 }

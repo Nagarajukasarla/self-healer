@@ -14,6 +14,9 @@ export class DbManager {
             password: env.DB_PASSWORD,
             database: env.DB_NAME,
             connectionTimeoutMillis: 5000,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
 
         this.pool.on("error", (err) => {
@@ -39,7 +42,8 @@ export class DbManager {
 
             logger.info({ key }, "Locator fetched successfully");
 
-            return result.rows[0].primary_locator.value;
+            const { type, value } = result.rows[0].primary_locator;
+            return type === "id" ? `#${value}` : value;
         } catch (error) {
             logger.error({ key, error }, "Failed to fetch locator");
 

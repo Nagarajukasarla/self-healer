@@ -1,31 +1,14 @@
-import { test } from "@playwright/test";
-import { logger } from "../utils/logger";
+import test from "@playwright/test";
+import { logger } from "@/utils/logger";
 import * as fs from "fs";
 import { dbManager } from "@/core/db/DBManager";
 import { HomePage } from "@/pages/HomePage";
-import { runtimeConfig } from "@/config/runtime";
+import { env } from "@/config/env";
 
 
 test.describe("Home Page Verification tests", () => {
-
-    // For now I don't these locators and beforeAllTest 
-    // let locators: Record<string, string>;
-    // test.beforeAll(async () => {
-    //     try {
-    //         // Try to load locators from PostgreSQL DB
-    //         locators = await new DbManager().getLocatorData("home.page");
-    //         logger.info("Successfully fetched locators from PostgreSQL database.");
-    //     } catch (error) {
-    //         logger.warn(
-    //             { error },
-    //             "Database is unavailable or table does not exist."
-    //         );
-    //     }
-    // });
-
     test.beforeEach(async ({ page }) => {
-        // Navigate to a mock page containing our HTML elements
-        await page.goto(runtimeConfig.targetUrl);
+        await page.goto(env.SHOPCO_URL);
     });
 
     test.afterEach(async ({ page }, testInfo) => {
@@ -53,17 +36,32 @@ test.describe("Home Page Verification tests", () => {
         });
     });
 
-    test("1. Click on Shop Now button", async ({ page }) => {
+    test("1. Verify page title", async ({ page }) => {
         const homePage = new HomePage(page);
 
-        const shopNowButton = await dbManager.getLocator("home.hero.shop_now_button");
+        const pageTitle = await dbManager.getLocator("home.page_title.shopco");
 
-        if (shopNowButton) {
-            await homePage.clickShopNow(shopNowButton);
+        if (pageTitle) {
+            await homePage.verifyPageTitle(pageTitle);
         } else {
-            logger.error("Shop Now button locator not found");
-            throw new Error("Shop Now button locator not found");
+            logger.error("Page title locator not found");
+            throw new Error("Page title locator not found");
         }
-    });  
+    });
+
+    // enter mens jeans  n search input
+    test("2. Enter sample text in search input", async ({ page }) => {
+        const homePage = new HomePage(page);
+
+        const searchInput = await dbManager.getLocator("home.navbar.search_input");
+
+        if (searchInput) {
+            await homePage.performSearch(searchInput, "Mens Jeans");
+        } else {
+            logger.error("Mens jeans search input locator not found");
+            throw new Error("Mens jeans search input locator not found");
+        }
+    });
     
 });
+    
