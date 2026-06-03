@@ -19,6 +19,9 @@ COPY . .
 # Run the linting checks during image build
 RUN pnpm run lint
 
+# Generate production build
+RUN pnpm run build
+
 # Expose the application port (defaults to 3000)
 EXPOSE 3000
 
@@ -28,4 +31,4 @@ ENV HOST=0.0.0.0
 ENV NODE_ENV=production
 
 # Start the application
-CMD ["pnpm", "start"]
+CMD ["pnpm", "run", "start:prod"]
