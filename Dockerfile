@@ -14,7 +14,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.json eslint
 RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application code
-COPY src ./src
+COPY ..
 
 # Run the linting checks during image build
 RUN pnpm run lint
