@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const env = {
-  HEADLESS: process.env.HEADLESS === "true",
+  HEADLESS: process.env.NODE_ENV === "production" || !!process.env.CI || process.env.HEADLESS === "true",
 
   HEALER_AI_SERVICE_URL: process.env.HEALER_AI_SERVICE_URL || "",
 

@@ -29,6 +29,7 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOST=0.0.0.0
 ENV NODE_ENV=production
+ENV HEADLESS=true
 
 # Start the application
 CMD ["pnpm", "run", "start:prod"]
