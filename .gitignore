@@ -72,3 +72,6 @@ x86/
 
 # Publish Web Output
 *.[Pp]ublish.xml
+
+# Playwright test results directory and it's all subdirectories and files
+test-results/
