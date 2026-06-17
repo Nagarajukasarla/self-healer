@@ -104,18 +104,10 @@ class TestReporter implements Reporter {
                     return;
                 }
 
-                /** * Get locator */
-                const locatorKey = "home.hero.shop_now_button";
-                const locatorData = await dbManager.getLocatorData(locatorKey);
-
-                if (!locatorData) {
-                    logger.warn({ locatorKey }, "Locator not found");
-                    return;
-                }
-
-                /** * Attachments */
+                /** * Attachments and failed locator key from console logs */
                 let pageSource = "";
                 let pageUrl = "";
+                let locatorKey = "";
                 const attachments = result.attachments || [];
 
                 for (const attachment of attachments) {
@@ -126,6 +118,34 @@ class TestReporter implements Reporter {
                     if (attachment.name === "page-url" && attachment.path) {
                         pageUrl = fs.readFileSync(attachment.path, "utf8");
                     }
+                }
+
+                // Extract failed locator key from console logs
+                const allLogs = [
+                    ...result.stdout.map(chunk => chunk.toString()),
+                    ...result.stderr.map(chunk => chunk.toString())
+                ];
+
+                for (let i = allLogs.length - 1; i >= 0; i--) {
+                    const match = allLogs[i].match(/LOCATOR_KEY:(\S+)/);
+                    if (match) {
+                        locatorKey = match[1].trim();
+                        break;
+                    }
+                }
+
+                if (!locatorKey) {
+                    logger.warn("No failed-locator-key found in console logs");
+                    return;
+                }
+
+                /** * Get locator */
+                const locatorData = await dbManager.getLocatorData(locatorKey);
+                logger.info("Failed locator key: "+locatorKey);
+
+                if (!locatorData) {
+                    logger.warn({ locatorKey }, "Locator not found");
+                    return;
                 }
 
                 /** * Healing request */

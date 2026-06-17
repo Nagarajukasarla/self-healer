@@ -2,6 +2,7 @@
 import { test } from "@playwright/test";
 import { logger } from "../utils/logger";
 import * as fs from "fs";
+import * as path from "path";
 import { dbManager } from "@/core/db/DBManager";
 import { HomePage } from "@/pages/HomePage";
 import { ProductPage } from "@/pages/ProductPage";
@@ -22,6 +23,12 @@ test.describe("CheckOut Verification tests", () => {
 
         const htmlPath = testInfo.outputPath("page.html");
 
+        // Ensure directories exist
+        const htmlDir = path.dirname(htmlPath);
+        if (!fs.existsSync(htmlDir)) {
+            fs.mkdirSync(htmlDir, { recursive: true });
+        }
+
         fs.writeFileSync(htmlPath, html);
 
         testInfo.attachments.push({
@@ -31,6 +38,11 @@ test.describe("CheckOut Verification tests", () => {
         });
 
         const urlPath = testInfo.outputPath("page-url.txt");
+
+        const urlDir = path.dirname(urlPath);
+        if (!fs.existsSync(urlDir)) {
+            fs.mkdirSync(urlDir, { recursive: true });
+        }
 
         fs.writeFileSync(urlPath, page.url());
 
@@ -48,6 +60,7 @@ test.describe("CheckOut Verification tests", () => {
         const shopNowButton = await dbManager.getLocator("home.hero.shop_now_button");
 
         if (shopNowButton) {
+            console.log("LOCATOR_KEY:home.hero.shop_now_button");
             await homePage.clickShopNow(shopNowButton);
         } else {
             logger.error("Shop Now button locator not found");
@@ -57,6 +70,7 @@ test.describe("CheckOut Verification tests", () => {
         const productsGrid = await dbManager.getLocator("products.list");
 
         if (productsGrid) {
+            console.log("LOCATOR_KEY:products.list");
             await productsPage.verifyProductsExist(productsGrid);
         } else {
             logger.error("Products list locator not found");
@@ -73,6 +87,7 @@ test.describe("CheckOut Verification tests", () => {
         const shopNowButton = await dbManager.getLocator("home.hero.shop_now_button");
 
         if (shopNowButton) {
+            console.log("LOCATOR_KEY:home.hero.shop_now_button");
             await homePage.clickShopNow(shopNowButton);
         } else {
             logger.error("Shop Now button locator not found");
@@ -82,6 +97,7 @@ test.describe("CheckOut Verification tests", () => {
         const firstProduct = await dbManager.getLocator("products.list.first_product_item");
 
         if (firstProduct) {
+            console.log("LOCATOR_KEY:products.list.first_product_item");
             await productsPage.selectTheFirstProduct(firstProduct);
         } else {
             logger.error("First product locator not found");
@@ -92,6 +108,7 @@ test.describe("CheckOut Verification tests", () => {
         const addToCartButton = await dbManager.getLocator("product.details.add_to_cart_button");
 
         if (addToCartButton) {
+            console.log("LOCATOR_KEY:product.details.add_to_cart_button");
             await productDetailsPage.clickAddToCart(addToCartButton);
         } else {
             logger.error("Add to Cart button locator not found");
@@ -102,6 +119,7 @@ test.describe("CheckOut Verification tests", () => {
         const addToCartSuccessMessage = await dbManager.getLocator("product.details.feedback_message");
 
         if (addToCartSuccessMessage) {
+            console.log("LOCATOR_KEY:product.details.feedback_message");
             await productDetailsPage.verifyAddToCartSuccessMessage(addToCartSuccessMessage);
         } else {
             logger.error("Add to Cart success message locator not found");

@@ -7,6 +7,13 @@ export class DbManager {
     private pool: pg.Pool;
 
     constructor() {
+        logger.info({
+            host: env.DB_HOST,
+            port: env.DB_PORT,
+            user: env.DB_USER,
+            database: env.DB_NAME
+        }, "Initializing PostgreSQL Pool");
+
         this.pool = new pg.Pool({
             host: env.DB_HOST,
             port: env.DB_PORT,
@@ -14,6 +21,8 @@ export class DbManager {
             password: env.DB_PASSWORD,
             database: env.DB_NAME,
             connectionTimeoutMillis: 5000,
+            max: 2,
+            idleTimeoutMillis: 1000,
             ssl: {
                 rejectUnauthorized: false
             }
