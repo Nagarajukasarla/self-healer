@@ -15,4 +15,5 @@ app.listen({ port: PORT, host: HOST }, (err, address) => {
         process.exit(1);
     }
     console.log(`\nHealer Automator Service running at: ${address}\n`);
+    console.log('hello')
 });
