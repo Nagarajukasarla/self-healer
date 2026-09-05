@@ -1,6 +1,6 @@
 # 🛡️ Self-Healer
 
-> Autonomous AI-powered self-healing test automation framework for Playwright, TypeScript, and Fastify.
+> Autonomous AI-powered self-healing test automation framework for Playwright.
 
 ---
 
@@ -30,7 +30,7 @@ In fast-paced software development, frontend user interfaces evolve constantly. 
 
 ---
 
-## 🛠️ Section 2: Technical Architecture & Developer Guide
+## 🛠️ Technical Architecture & Developer Guide
 
 ### 📐 Technology Matrix
 
