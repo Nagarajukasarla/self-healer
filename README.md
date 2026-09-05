@@ -47,45 +47,7 @@ In fast-paced software development, frontend user interfaces evolve constantly. 
 
 ### 🔄 End-to-End Self-Healing Workflow
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as Developer / CI Pipeline
-    participant Test as 🧪 Playwright Test Suite
-    participant Reporter as 📊 Custom TestReporter
-    participant DB as 🗄️ PostgreSQL Database
-    participant AI as 🧠 Healer AI Microservice
-    participant Mail as ✉️ Mail Alert Service
-
-    User->>Test: Trigger Test Execution (pnpm test)
-    Test->>Test: Execute Test Steps
-    alt Test Passes ✅
-        Test-->>User: Report All Tests Passed
-    else Locator Failure Detected ❌
-        Test->>Reporter: Intercept Test Failure (`onTestEnd`)
-        Reporter->>Reporter: Extract DOM HTML Source, Page URL & Failed Locator Key
-        
-        alt Non-Locator Issue (e.g. Assertion/Network Error)
-            Reporter->>Mail: Send Non-Locator Failure Alert Email
-        else Locator Issue
-            Reporter->>DB: Query original locator & metadata by `locatorKey`
-            DB-->>Reporter: Return locator metadata
-            Reporter->>AI: POST /heal (DOM Source, URL, Broken Locator & Metadata)
-            AI->>AI: Analyze DOM hierarchy & generate resilient replacement
-            AI-->>Reporter: Return `HealingResponse` (new locator)
-            
-            Reporter->>DB: Update database record with healed locator
-            Reporter->>Test: Trigger automated in-flight re-run (`TestHealingHelper.rerunTest`)
-            
-            alt Re-run Succeeds ✅
-                Test-->>Reporter: Test passed after healing
-                Reporter-->>User: Overall status marked Passed (Exit Code 0)
-            else Max Retries Exhausted (>= 2) ❌
-                Reporter->>Mail: Send "Healing Retries Exhausted" Alert Email
-            end
-        end
-    end
-```
+![End-to-End Self-Healing Workflow](public/images/self-healer-sequence-diagram.png)
 
 ---
 
